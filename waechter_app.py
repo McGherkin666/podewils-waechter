@@ -281,7 +281,7 @@ elif st.session_state.seite == "frage_kinder":
     waechter("Nun lies. Der Wächter prüft nicht nur Augen, sondern auch Geduld.")
 
     kinder = st.number_input(
-        "Wie viele Kinder hatte Heinrich Graf von Podewils laut Infotafel?",
+        "Wie viele Kinder haben ihm das Mausoleum laut Infotafel gewidmet?",
         min_value=0,
         max_value=20,
         step=1
