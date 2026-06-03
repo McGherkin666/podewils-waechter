@@ -64,6 +64,8 @@ div[data-testid="stMultiSelect"] label p {
     border-radius: 10px;
     padding: 14px;
     margin: 10px 0;
+    color: #f1e7d0;
+    line-height: 1.5;
 }
 
 div.stButton > button {
@@ -358,21 +360,9 @@ elif st.session_state.seite == "saeule":
     waechter(
         f"Reiß dich zusammen, {name}.<br><br>"
         "Diese Säule erzählt von den Grundlagen eines funktionierenden Dorfes.<br><br>"
-        "Sie sprechen selten laut – aber sie tragen alles."
+        "Sie sprechen selten laut – aber sie tragen alles.<br><br>"
+        "Erkennst du sie?"
     )
-
-    st.markdown("""
-    <div class="symbolbox">
-    <b>Der Pflug</b><br>
-    steht für Nahrung. Ohne sie hungert ein Dorf.<br><br>
-    <b>Der Äskulapstab</b><br>
-    steht für Gesundheit. Ohne sie leidet ein Dorf.<br><br>
-    <b>Der Amboss mit Werkzeug</b><br>
-    steht für Arbeit und Handwerk. Ohne sie steht ein Dorf still.<br><br>
-    <b>Die Kanne</b><br>
-    steht für Versorgung und Gemeinschaft. Ohne sie zerfällt ein Dorf.
-    </div>
-    """, unsafe_allow_html=True)
 
     symbole = st.multiselect(
         "Welche Symbole erkennst du tatsächlich?",
@@ -413,6 +403,19 @@ elif st.session_state.seite == "entscheidung_2":
         "Akzeptabel.<br><br>"
         "Du erkennst zumindest die Grundlagen funktionierender Dorfverwaltung."
     )
+
+    st.markdown("""
+    <div class="symbolbox">
+    <b>Der Pflug</b><br>
+    steht für Nahrung. Ohne sie hungert ein Dorf.<br><br>
+    <b>Der Äskulapstab</b><br>
+    steht für Gesundheit. Ohne sie leidet ein Dorf.<br><br>
+    <b>Der Amboss mit Werkzeug</b><br>
+    steht für Arbeit und Handwerk. Ohne sie steht ein Dorf still.<br><br>
+    <b>Die Kanne</b><br>
+    steht für Versorgung und Gemeinschaft. Ohne sie zerfällt ein Dorf.
+    </div>
+    """, unsafe_allow_html=True)
 
     entscheidung = st.radio(
         "Fredersdorf gerät in eine Krise. Was schützt du zuerst?",
@@ -472,9 +475,9 @@ elif st.session_state.seite == "schwelle":
     st.header("Die Schwelle")
 
     waechter(
-        f"{name}. Von hier an wird es schwieriger.<br><br>"
+        f"{name}. Konzentriere dich!<br><br>"
         "Manche Wege verbinden Orte.<br><br>"
-        "Andere verbinden Entscheidungen."
+        "Andere führen geradewegs in die Quarantänebox."
     )
 
     antwort = st.radio(
