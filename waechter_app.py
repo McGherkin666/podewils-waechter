@@ -21,12 +21,41 @@ h1, h2, h3 {
     color: #c8a85a;
 }
 
+label {
+    color: #f5e6b3 !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+}
+
+.waechterbox {
+    background-color: #252525;
+    border-left: 5px solid #c8a85a;
+    padding: 14px;
+    margin: 10px 0;
+    border-radius: 8px;
+    color: #f1e7d0;
+    font-size: 1.05rem;
+}
+
+.koordinate {
+    background-color: #202020;
+    border: 1px solid #c8a85a;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 1.25em;
+    color: #f5df9b;
+    text-align: center;
+    margin: 12px 0;
+    font-weight: 700;
+}
+
 div.stButton > button {
     background-color: #8a6a2f;
     color: #fff5d6;
     border-radius: 8px;
     border: 1px solid #c8a85a;
     font-weight: bold;
+    width: 100%;
 }
 
 div.stButton > button:hover {
@@ -34,24 +63,12 @@ div.stButton > button:hover {
     color: white;
 }
 
-.waechterbox {
-    background-color: #1c1c1c;
-    border-left: 5px solid #c8a85a;
-    padding: 14px;
-    margin: 10px 0;
-    border-radius: 8px;
-    color: #f1e7d0;
+div[data-baseweb="select"] > div {
+    background-color: #f2f2f2;
 }
 
-.koordinate {
-    background-color: #202020;
-    border: 1px solid #c8a85a;
-    padding: 14px;
-    border-radius: 8px;
-    font-size: 1.2em;
-    color: #f5df9b;
-    text-align: center;
-    margin: 8px 0;
+input {
+    background-color: #f2f2f2 !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -366,7 +383,7 @@ elif st.session_state.seite == "entscheidung_2":
     waechter_text(
         "Akzeptabel. Pflug, Äskulapstab, Amboss und Kanne. "
         "Nahrung, Gesundheit, Arbeit und Gemeinschaft. "
-        "Und über allem sitzt der Vogel."
+        "Die Grundlagen jedes funktionierenden Dorfes."
     )
 
     entscheidung = st.radio(
@@ -402,7 +419,8 @@ elif st.session_state.seite == "urteil_2":
     elif entscheidung_1 == "Ordnung" and entscheidung_2 == "Arbeit":
         waechter_text(f"Der Wächter vermutet Verwaltungserfahrung, {name} {titel}.")
     else:
-        waechter_text(f"Der Vogel hat dich beobachtet, {name}. Noch ist unklar, ob das beruhigend ist.")
+        waechter_text(f"Der Wächter hat deine Entscheidungen registriert, {name}.")
+        waechter_text("Noch ist unklar, ob das beruhigend ist.")
 
     st.subheader("Der nächste Ort")
 
@@ -418,7 +436,7 @@ elif st.session_state.seite == "urteil_2":
 
 
 # -----------------------------
-# SCHWELLE / BRÜCKE
+# SCHWELLE
 # -----------------------------
 
 elif st.session_state.seite == "schwelle":
@@ -436,8 +454,8 @@ elif st.session_state.seite == "schwelle":
         "Was siehst du hier?",
         [
             "Eine Brücke",
-            "Einen ambitionierten Dorfgraben mit Größenwahn",
             "Eine äußerst preußische Methode, nicht nass zu werden",
+            "Ein bemerkenswert aufwendiger Versuch, fünf Meter Wasser zu überwinden",
         ],
     )
 
@@ -446,7 +464,10 @@ elif st.session_state.seite == "schwelle":
             gehe_zu("tier_pruefung")
         else:
             st.error("Der Wächter ist nicht überzeugt.")
-            waechter_text("Originell. Aber Kreativität ersetzt keine Beobachtung. Schau genauer hin.")
+            waechter_text(
+                f"Originell, {name}. Der Wächter schätzt Kreativität. "
+                "Allerdings erst nach korrekter Beobachtung. Schau genauer hin."
+            )
 
 
 elif st.session_state.seite == "tier_pruefung":
@@ -591,17 +612,37 @@ elif st.session_state.seite == "endurteil":
         )
 
         st.subheader("Vorläufige Beaufsichtigung")
+
+        waechter_text(
+            "Das eigentliche Vermächtnis wird heute anderen anvertraut."
+        )
+
+        waechter_text(
+            "Für Personen mit vorläufig eingeschränkter Vertrauenswürdigkeit "
+            "unterhält der Wächter jedoch eine gesonderte Einrichtung."
+        )
+
+        waechter_text(
+            "Eine kleine Dose für Besucher, deren moralische Flexibilität "
+            "noch einer genaueren Beobachtung bedarf."
+        )
+
+        waechter_text(
+            "Der Wächter nennt sie gelegentlich: „Die Quarantänebox.“ "
+            "Natürlich vollkommen inoffiziell."
+        )
+
         koordinate("N 52° 30.811'", "E 13° 45.022'")
 
         st.markdown("**Einstufung: Moralisch flexibel. Beaufsichtigung empfohlen.**")
 
         st.write("Auch der Wächter gibt jedem eine zweite Chance.")
         st.write("Arbeite an:")
-        st.write("□ Integrität")
-        st.write("□ Verschwiegenheit")
-        st.write("□ Verantwortungsbewusstsein")
-        st.write("□ Dorfverwaltungskompetenz")
-        st.write("□ Weniger spontane Offenheit")
+        st.write("☐ Integrität")
+        st.write("☐ Verschwiegenheit")
+        st.write("☐ Verantwortungsbewusstsein")
+        st.write("☐ Dorfverwaltungskompetenz")
+        st.write("☐ Weniger spontane Offenheit")
         st.write("Du darfst selbstverständlich loggen.")
         st.write("Der Wächter glaubt an Entwicklung. Meistens.")
 
@@ -613,13 +654,17 @@ elif st.session_state.seite == "endurteil":
             waechter_text("Abgewogen. Erstaunlich differenziert.")
 
         st.subheader("Podewils' Vermächtnis")
+
         koordinate("N 52° 30.931'", "E 13° 45.063'")
 
         waechter_text(
-            f"Gegen alle Erwartungen erscheinst du geeignet, {name} {titel}. "
-            "Du hast gesehen. Du hast zugehört. Du hast geurteilt. "
-            "Heute wurdest auch du beurteilt."
+            f"Gegen alle Erwartungen erscheinst du geeignet, {name} {titel}."
         )
+
+        waechter_text("Du hast gesehen.")
+        waechter_text("Du hast zugehört.")
+        waechter_text("Du hast geurteilt.")
+        waechter_text("Heute wurdest auch du beurteilt.")
 
         waechter_text(
             "Podewils' Vermächtnis wird dir anvertraut. "
