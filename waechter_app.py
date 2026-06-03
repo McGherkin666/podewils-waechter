@@ -2,25 +2,14 @@ import streamlit as st
 
 st.set_page_config(page_title="Podewils' Vermächtnis", page_icon="🦉", layout="centered")
 
+# ---------- DESIGN ----------
+
 st.markdown("""
 <style>
-.stApp {
-    background-color: #0f0f0f;
-    color: #f1e7d0;
-}
-
-h1, h2, h3 {
-    color: #d4af62 !important;
-}
-
-p, label, span {
-    color: #f1e7d0 !important;
-    font-size: 1.05rem !important;
-}
-
-label {
-    font-weight: 700 !important;
-}
+.stApp { background-color: #0f0f0f; color: #f1e7d0; }
+h1, h2, h3 { color: #d4af62 !important; }
+p, label, span { color: #f1e7d0 !important; font-size: 1.06rem !important; }
+label { font-weight: 800 !important; }
 
 div[role="radiogroup"] label p,
 div[data-testid="stMultiSelect"] label p {
@@ -40,7 +29,7 @@ div[data-testid="stMultiSelect"] label p {
 
 .waechtertitle {
     color: #d4af62;
-    font-weight: 800;
+    font-weight: 900;
     font-size: 1.1rem;
     margin-bottom: 8px;
 }
@@ -54,7 +43,7 @@ div[data-testid="stMultiSelect"] label p {
     text-align: center;
     color: #ffe29a;
     font-size: 1.35rem;
-    font-weight: 800;
+    font-weight: 900;
     letter-spacing: 0.5px;
 }
 
@@ -73,7 +62,7 @@ div.stButton > button {
     color: #fff5d6;
     border: 1px solid #d4af62;
     border-radius: 9px;
-    font-weight: 800;
+    font-weight: 900;
     width: 100%;
     padding: 0.8rem;
 }
@@ -96,6 +85,8 @@ div[data-baseweb="select"] > div {
 """, unsafe_allow_html=True)
 
 
+# ---------- FUNKTIONEN ----------
+
 def waechter(text):
     st.markdown(
         f"""
@@ -115,6 +106,16 @@ def koordinate(n, e):
 def gehe_zu(seite):
     st.session_state.seite = seite
     st.rerun()
+
+
+def add_punkte(punkte):
+    st.session_state.punkte += punkte
+
+
+def vertrauensquote():
+    if st.session_state.max_punkte == 0:
+        return 0
+    return round((st.session_state.punkte / st.session_state.max_punkte) * 100)
 
 
 def titel_bilden(geschlecht, eigenschaft):
@@ -143,6 +144,8 @@ def titel_bilden(geschlecht, eigenschaft):
     return neutral
 
 
+# ---------- SESSION ----------
+
 defaults = {
     "seite": "start",
     "name": "",
@@ -150,13 +153,18 @@ defaults = {
     "entscheidung_1": "",
     "entscheidung_2": "",
     "entscheidung_3": "",
+    "brueckenantwort": "",
     "geraeusch": "",
+    "punkte": 0,
+    "max_punkte": 100,
 }
 
 for k, v in defaults.items():
     if k not in st.session_state:
         st.session_state[k] = v
 
+
+# ---------- KOPF ----------
 
 try:
     st.image("Podewils.jpeg", use_container_width=True)
@@ -167,6 +175,8 @@ st.title("PODEWILS' VERMÄCHTNIS")
 st.subheader("Das Urteil des Wächters")
 st.divider()
 
+
+# ---------- START ----------
 
 if st.session_state.seite == "start":
 
@@ -180,7 +190,6 @@ if st.session_state.seite == "start":
     )
 
     name = st.text_input("Wie lautet dein Name?")
-
     geschlecht = st.selectbox("Geschlecht", ["weiblich", "männlich", "keine Angabe"])
 
     eigenschaft = st.selectbox(
@@ -201,6 +210,8 @@ if st.session_state.seite == "start":
             st.session_state.titel = titel_bilden(geschlecht, eigenschaft)
             gehe_zu("mausoleum_start")
 
+
+# ---------- MAUSOLEUM ----------
 
 elif st.session_state.seite == "mausoleum_start":
 
@@ -223,18 +234,13 @@ elif st.session_state.seite == "mausoleum_start":
 elif st.session_state.seite == "frage_saerge":
 
     st.header("Erste Beobachtung")
-
     waechter("Zähle genau. Dies ist kein Ort für grobe Schätzungen.")
 
-    saerge = st.number_input(
-        "Wie viele sichtbare Särge erkennst du?",
-        min_value=0,
-        max_value=20,
-        step=1
-    )
+    saerge = st.number_input("Wie viele sichtbare Särge erkennst du?", min_value=0, max_value=20, step=1)
 
     if st.button("Antwort prüfen"):
         if saerge == 4:
+            add_punkte(10)
             gehe_zu("frage_ornament")
         else:
             st.error("Der Wächter ist nicht überzeugt.")
@@ -248,7 +254,6 @@ elif st.session_state.seite == "frage_saerge":
 elif st.session_state.seite == "frage_ornament":
 
     st.header("Zweite Beobachtung")
-
     waechter("Nicht alles, was sichtbar ist, wurde gleich gestaltet. Achte auf die Details.")
 
     ornamente = st.number_input(
@@ -260,6 +265,7 @@ elif st.session_state.seite == "frage_ornament":
 
     if st.button("Antwort prüfen"):
         if ornamente == 1:
+            add_punkte(10)
             gehe_zu("frage_kinder")
         else:
             st.error("Der Wächter ist nicht überzeugt.")
@@ -272,7 +278,6 @@ elif st.session_state.seite == "frage_ornament":
 elif st.session_state.seite == "frage_kinder":
 
     st.header("Dritte Beobachtung")
-
     waechter("Nun lies. Der Wächter prüft nicht nur Augen, sondern auch Geduld.")
 
     kinder = st.number_input(
@@ -284,6 +289,7 @@ elif st.session_state.seite == "frage_kinder":
 
     if st.button("Antwort prüfen"):
         if kinder == 4:
+            add_punkte(10)
             gehe_zu("entscheidung_1")
         else:
             st.error("Der Wächter ist nicht überzeugt.")
@@ -292,6 +298,8 @@ elif st.session_state.seite == "frage_kinder":
                 "Schau noch einmal auf die Infotafel."
             )
 
+
+# ---------- ENTSCHEIDUNG 1 ----------
 
 elif st.session_state.seite == "entscheidung_1":
 
@@ -324,6 +332,16 @@ elif st.session_state.seite == "entscheidung_1":
 
     if st.button("Antwort registrieren"):
         st.session_state.entscheidung_1 = entscheidung
+
+        if entscheidung in ["Wahrheit", "Geschichten"]:
+            add_punkte(10)
+        elif entscheidung in ["Tradition", "Ordnung"]:
+            add_punkte(8)
+        elif entscheidung == "Die letzte Dorfkneipe":
+            add_punkte(7)
+        else:
+            add_punkte(6)
+
         gehe_zu("urteil_1")
 
 
@@ -351,6 +369,8 @@ elif st.session_state.seite == "urteil_1":
         gehe_zu("saeule")
 
 
+# ---------- SÄULE ----------
+
 elif st.session_state.seite == "saeule":
 
     name = st.session_state.name
@@ -376,15 +396,11 @@ elif st.session_state.seite == "saeule":
         ],
     )
 
-    richtige_symbole = {
-        "Amboss mit Werkzeug",
-        "Äskulapstab",
-        "Pflug",
-        "Kanne",
-    }
+    richtige_symbole = {"Amboss mit Werkzeug", "Äskulapstab", "Pflug", "Kanne"}
 
     if st.button("Symbole prüfen"):
         if set(symbole) == richtige_symbole:
+            add_punkte(15)
             gehe_zu("entscheidung_2")
         else:
             st.error("Der Wächter ist nicht überzeugt.")
@@ -424,6 +440,14 @@ elif st.session_state.seite == "entscheidung_2":
 
     if st.button("Antwort registrieren"):
         st.session_state.entscheidung_2 = entscheidung
+
+        if entscheidung == "Gemeinschaft":
+            add_punkte(10)
+        elif entscheidung in ["Gesundheit", "Nahrung"]:
+            add_punkte(9)
+        else:
+            add_punkte(8)
+
         gehe_zu("urteil_2")
 
 
@@ -468,6 +492,8 @@ elif st.session_state.seite == "urteil_2":
         gehe_zu("schwelle")
 
 
+# ---------- SCHWELLE ----------
+
 elif st.session_state.seite == "schwelle":
 
     name = st.session_state.name
@@ -489,16 +515,51 @@ elif st.session_state.seite == "schwelle":
         ],
     )
 
-    if st.button("Antwort prüfen"):
+    if st.button("Antwort registrieren"):
+        st.session_state.brueckenantwort = antwort
+
         if antwort == "Eine Brücke":
-            gehe_zu("tier_pruefung")
+            add_punkte(10)
+            gehe_zu("bruecke_urteil")
+        elif antwort == "Eine äußerst preußische Methode, nicht nass zu werden":
+            add_punkte(8)
+            gehe_zu("bruecke_urteil")
         else:
-            st.error("Der Wächter ist nicht überzeugt.")
-            waechter(
-                f"Originell, {name}.<br><br>"
-                "Der Wächter schätzt Kreativität.<br><br>"
-                "Allerdings erst nach korrekter Beobachtung."
-            )
+            add_punkte(7)
+            gehe_zu("bruecke_urteil")
+
+
+elif st.session_state.seite == "bruecke_urteil":
+
+    name = st.session_state.name
+    antwort = st.session_state.brueckenantwort
+
+    st.header("Urteil des Wächters")
+
+    if antwort == "Eine Brücke":
+        waechter(
+            "Sachlich korrekt.<br><br>"
+            "Der Wächter notiert: nüchterne Beobachtung."
+        )
+    elif antwort == "Eine äußerst preußische Methode, nicht nass zu werden":
+        waechter(
+            "Indirekt korrekt.<br><br>"
+            "Der Wächter erkennt Sinn für Verwaltung, Ordnung und trockene Füße."
+        )
+    else:
+        waechter(
+            "Ungewöhnlich formuliert.<br><br>"
+            "Aber nicht grundsätzlich falsch.<br><br>"
+            "Der Wächter wertet es als ausreichende Annäherung an die Wirklichkeit."
+        )
+
+    waechter(
+        f"Die Antwort wird gewertet, {name}.<br><br>"
+        "Fahre fort. Noch ist das Urteil nicht gesprochen."
+    )
+
+    if st.button("Dem Wächter folgen"):
+        gehe_zu("tier_pruefung")
 
 
 elif st.session_state.seite == "tier_pruefung":
@@ -520,6 +581,7 @@ elif st.session_state.seite == "tier_pruefung":
 
     if st.button("Antwort prüfen"):
         if tier == "Eule":
+            add_punkte(10)
             gehe_zu("tier_urteil")
         else:
             st.error("Der Wächter ist nicht überzeugt.")
@@ -565,6 +627,12 @@ elif st.session_state.seite == "hoeren":
 
     if st.button("Antwort registrieren"):
         st.session_state.geraeusch = geraeusch
+
+        if geraeusch == "Die Stimme des Wächters":
+            add_punkte(6)
+        else:
+            add_punkte(5)
+
         gehe_zu("hoeren_urteil")
 
 
@@ -592,6 +660,8 @@ elif st.session_state.seite == "hoeren_urteil":
         gehe_zu("entscheidung_3")
 
 
+# ---------- LETZTE FRAGE ----------
+
 elif st.session_state.seite == "entscheidung_3":
 
     st.header("Die letzte Frage")
@@ -614,14 +684,25 @@ elif st.session_state.seite == "entscheidung_3":
 
     if st.button("Urteil empfangen"):
         st.session_state.entscheidung_3 = entscheidung
+
+        if entscheidung == "Nur den Betroffenen mitteilen":
+            add_punkte(10)
+        elif entscheidung == "Geheim halten":
+            add_punkte(8)
+        else:
+            add_punkte(0)
+
         gehe_zu("endurteil")
 
+
+# ---------- ENDURTEIL ----------
 
 elif st.session_state.seite == "endurteil":
 
     name = st.session_state.name
     titel = st.session_state.titel
     e3 = st.session_state.entscheidung_3
+    quote = vertrauensquote()
 
     st.header("Das abschließende Urteil")
 
@@ -633,8 +714,13 @@ elif st.session_state.seite == "endurteil":
             f"Bedauerlich, {name}.<br><br>"
             "Der Wächter hatte Hoffnungen.<br><br>"
             "Nicht besonders große – aber immerhin Hoffnungen.<br><br>"
-            "Deine Antworten deuten auf spontane Moral, ausgeprägte Transparenz "
-            "oder eine bemerkenswerte Neigung zu moralischer Flexibilität hin."
+            f"Deine rechnerische Vertrauenswürdigkeit liegt bei <b>{quote} %</b>."
+        )
+
+        waechter(
+            "Fachlich mag das brauchbar sein.<br><br>"
+            "Moralisch bleibt es riskant.<br><br>"
+            "Die letzte Antwort überschreibt alle vorherigen Verdienste."
         )
 
         waechter(
@@ -674,6 +760,11 @@ elif st.session_state.seite == "endurteil":
             waechter("Verschwiegenheit.<br><br>Kontrolle.<br><br>Das gefällt dem Wächter.")
         else:
             waechter("Abgewogen.<br><br>Erstaunlich differenziert.")
+
+        waechter(
+            f"Vertrauenswürdigkeit: <b>{quote} %</b>.<br><br>"
+            "Ergebnis: geeignet."
+        )
 
         koordinate("N 52° 30.931'", "E 13° 45.063'")
 
