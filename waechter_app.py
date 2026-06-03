@@ -136,13 +136,12 @@ def titel_bilden(geschlecht, eigenschaft):
         "impulsiv": ("die Impulsive", "der Impulsive", "impulsiv"),
         "treuherzig": ("die Treuherzige", "der Treuherzige", "treuherzig"),
     }
-    weiblich, maennlich, neutral = formen[eigenschaft]
-    if geschlecht == "weiblich":
-        return weiblich
-    if geschlecht == "männlich":
-        return maennlich
-    return neutral
+    weiblich, maennlich = formen[eigenschaft]
 
+if geschlecht == "weiblich":
+    return weiblich
+else:
+    return maennlich
 
 # ---------- SESSION ----------
 
@@ -190,7 +189,7 @@ if st.session_state.seite == "start":
     )
 
     name = st.text_input("Wie lautet dein Name?")
-    geschlecht = st.selectbox("Geschlecht", ["weiblich", "männlich", "keine Angabe"])
+    geschlecht = st.selectbox("Geschlecht", ["weiblich", "männlich"])
 
     eigenschaft = st.selectbox(
         "Welche Eigenschaft beschreibt dich am besten?",
