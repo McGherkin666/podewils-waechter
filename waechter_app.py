@@ -1,61 +1,79 @@
 import streamlit as st
 
-st.set_page_config(
-    page_title="Podewils' Vermächtnis",
-    page_icon="🦉",
-    layout="centered"
-)
-
-# -----------------------------
-# DESIGN
-# -----------------------------
+st.set_page_config(page_title="Podewils' Vermächtnis", page_icon="🦉", layout="centered")
 
 st.markdown("""
 <style>
 .stApp {
-    background-color: #111111;
-    color: #e8e0cf;
+    background-color: #0f0f0f;
+    color: #f1e7d0;
 }
 
 h1, h2, h3 {
-    color: #c8a85a;
+    color: #d4af62 !important;
+}
+
+p, label, span {
+    color: #f1e7d0 !important;
+    font-size: 1.05rem !important;
 }
 
 label {
-    color: #f5e6b3 !important;
-    font-size: 1.1rem !important;
     font-weight: 700 !important;
 }
 
+div[role="radiogroup"] label p,
+div[data-testid="stMultiSelect"] label p {
+    color: #f1e7d0 !important;
+    font-size: 1.08rem !important;
+}
+
 .waechterbox {
-    background-color: #252525;
-    border-left: 5px solid #c8a85a;
-    padding: 14px;
-    margin: 10px 0;
-    border-radius: 8px;
+    background: #252525;
+    border-left: 5px solid #d4af62;
+    border-radius: 10px;
+    padding: 16px;
+    margin: 14px 0;
     color: #f1e7d0;
-    font-size: 1.05rem;
+    line-height: 1.55;
+}
+
+.waechtertitle {
+    color: #d4af62;
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
 }
 
 .koordinate {
-    background-color: #202020;
-    border: 1px solid #c8a85a;
-    padding: 16px;
-    border-radius: 8px;
-    font-size: 1.25em;
-    color: #f5df9b;
+    background: #202020;
+    border: 1px solid #d4af62;
+    border-radius: 10px;
+    padding: 18px;
+    margin: 16px 0;
     text-align: center;
-    margin: 12px 0;
-    font-weight: 700;
+    color: #ffe29a;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.symbolbox {
+    background: #1d1d1d;
+    border: 1px solid #8a6a2f;
+    border-radius: 10px;
+    padding: 14px;
+    margin: 10px 0;
 }
 
 div.stButton > button {
     background-color: #8a6a2f;
     color: #fff5d6;
-    border-radius: 8px;
-    border: 1px solid #c8a85a;
-    font-weight: bold;
+    border: 1px solid #d4af62;
+    border-radius: 9px;
+    font-weight: 800;
     width: 100%;
+    padding: 0.8rem;
 }
 
 div.stButton > button:hover {
@@ -63,41 +81,33 @@ div.stButton > button:hover {
     color: white;
 }
 
-div[data-baseweb="select"] > div {
-    background-color: #f2f2f2;
+input, textarea {
+    background-color: #f4f4f4 !important;
+    color: #111111 !important;
 }
 
-input {
-    background-color: #f2f2f2 !important;
+div[data-baseweb="select"] > div {
+    background-color: #f4f4f4 !important;
+    color: #111111 !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
 
-# -----------------------------
-# HILFSFUNKTIONEN
-# -----------------------------
-
-def waechter_text(text):
+def waechter(text):
     st.markdown(
         f"""
         <div class="waechterbox">
-        🦉 <b>Der Wächter:</b><br>{text}
+            <div class="waechtertitle">🦉 Der Wächter</div>
+            {text}
         </div>
         """,
         unsafe_allow_html=True
     )
 
 
-def koordinate(nord, ost):
-    st.markdown(
-        f"""
-        <div class="koordinate">
-        {nord}<br>{ost}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+def koordinate(n, e):
+    st.markdown(f"<div class='koordinate'>{n}<br>{e}</div>", unsafe_allow_html=True)
 
 
 def gehe_zu(seite):
@@ -123,19 +133,13 @@ def titel_bilden(geschlecht, eigenschaft):
         "impulsiv": ("die Impulsive", "der Impulsive", "impulsiv"),
         "treuherzig": ("die Treuherzige", "der Treuherzige", "treuherzig"),
     }
-
     weiblich, maennlich, neutral = formen[eigenschaft]
-
     if geschlecht == "weiblich":
         return weiblich
     if geschlecht == "männlich":
         return maennlich
     return neutral
 
-
-# -----------------------------
-# SESSION
-# -----------------------------
 
 defaults = {
     "seite": "start",
@@ -147,63 +151,43 @@ defaults = {
     "geraeusch": "",
 }
 
-for key, value in defaults.items():
-    if key not in st.session_state:
-        st.session_state[key] = value
+for k, v in defaults.items():
+    if k not in st.session_state:
+        st.session_state[k] = v
 
-
-# -----------------------------
-# KOPF
-# -----------------------------
 
 try:
     st.image("Podewils.jpeg", use_container_width=True)
 except Exception:
-    st.warning("Titelbild fehlt noch. Bitte Datei 'Podewils.jpeg' in GitHub hochladen.")
+    pass
 
 st.title("PODEWILS' VERMÄCHTNIS")
 st.subheader("Das Urteil des Wächters")
 st.divider()
 
 
-# -----------------------------
-# START
-# -----------------------------
-
 if st.session_state.seite == "start":
 
     st.header("Die Aufzeichnungen des Wächters")
 
-    waechter_text(
-        "Willkommen. Seit Jahrhunderten beobachte ich Fredersdorf. "
-        "Heute beobachte ich dich. Bevor die Prüfung beginnt, will ich wissen, wen ich beurteile."
+    waechter(
+        "Willkommen.<br><br>"
+        "Seit Jahrhunderten beobachte ich Fredersdorf.<br><br>"
+        "Heute beobachte ich dich.<br><br>"
+        "Bevor die Prüfung beginnt, will ich wissen, wen ich beurteile."
     )
 
     name = st.text_input("Wie lautet dein Name?")
 
-    geschlecht = st.selectbox(
-        "Geschlecht",
-        ["weiblich", "männlich", "keine Angabe"]
-    )
+    geschlecht = st.selectbox("Geschlecht", ["weiblich", "männlich", "keine Angabe"])
 
     eigenschaft = st.selectbox(
         "Welche Eigenschaft beschreibt dich am besten?",
         [
-            "wachsam",
-            "neugierig",
-            "beharrlich",
-            "besonnen",
-            "mutig",
-            "skeptisch",
-            "aufmerksam",
-            "abenteuerlustig",
-            "gesprächsbereit",
-            "optimistisch",
-            "vertrauensselig",
-            "naiv",
-            "eigenwillig",
-            "impulsiv",
-            "treuherzig",
+            "wachsam", "neugierig", "beharrlich", "besonnen", "mutig",
+            "skeptisch", "aufmerksam", "abenteuerlustig", "gesprächsbereit",
+            "optimistisch", "vertrauensselig", "naiv", "eigenwillig",
+            "impulsiv", "treuherzig"
         ],
     )
 
@@ -213,63 +197,99 @@ if st.session_state.seite == "start":
         else:
             st.session_state.name = name.strip()
             st.session_state.titel = titel_bilden(geschlecht, eigenschaft)
-            gehe_zu("mausoleum")
+            gehe_zu("mausoleum_start")
 
 
-# -----------------------------
-# MAUSOLEUM
-# -----------------------------
-
-elif st.session_state.seite == "mausoleum":
+elif st.session_state.seite == "mausoleum_start":
 
     name = st.session_state.name
     titel = st.session_state.titel
 
     st.header("Die Wächter der Erinnerung")
 
-    waechter_text(
-        f"Willkommen, {name} {titel}. Ein Dorf vergisst schneller, als es zugibt. "
-        "Bevor du urteilst, solltest du lernen hinzusehen."
+    waechter(
+        f"Willkommen, {name} {titel}.<br><br>"
+        "Ein Dorf vergisst schneller, als es zugibt.<br><br>"
+        "Bevor du urteilst, solltest du lernen hinzusehen.<br><br>"
+        "Wirf einen Blick in die unteren Fenster des Mausoleums."
     )
 
-    st.subheader("Beobachtungsaufgaben")
+    if st.button("Ich sehe hin"):
+        gehe_zu("frage_saerge")
+
+
+elif st.session_state.seite == "frage_saerge":
+
+    st.header("Erste Beobachtung")
+
+    waechter("Zähle genau. Dies ist kein Ort für grobe Schätzungen.")
 
     saerge = st.number_input(
-        "1. Wie viele sichtbare Särge erkennst du?",
+        "Wie viele sichtbare Särge erkennst du?",
         min_value=0,
         max_value=20,
         step=1
     )
 
-    ornamente = st.number_input(
-        "2. Wie viele dieser Särge tragen ein rundovales Ornament?",
-        min_value=0,
-        max_value=20,
-        step=1
-    )
-
-    kinder = st.number_input(
-        "3. Wie viele Kinder hatte Heinrich Graf von Podewils laut Infotafel?",
-        min_value=0,
-        max_value=20,
-        step=1
-    )
-
-    if st.button("Antworten prüfen"):
-        if saerge == 4 and ornamente == 1 and kinder == 4:
-            gehe_zu("entscheidung_1")
+    if st.button("Antwort prüfen"):
+        if saerge == 4:
+            gehe_zu("frage_ornament")
         else:
             st.error("Der Wächter ist nicht überzeugt.")
-            waechter_text(
-                "Bedauerlich. Deine Auffassungsgabe ist in einem Zustand, "
-                "der weitere Prüfungen derzeit nicht rechtfertigt. "
-                "Schau noch einmal hin. Dies ist ein Mausoleum, kein Schätzspiel."
+            waechter(
+                "Bedauerlich.<br><br>"
+                "Deine Auffassungsgabe ist in einem Zustand, der weitere Prüfungen derzeit nicht rechtfertigt.<br><br>"
+                "Schau noch einmal hin."
             )
 
 
-# -----------------------------
-# ENTSCHEIDUNG 1
-# -----------------------------
+elif st.session_state.seite == "frage_ornament":
+
+    st.header("Zweite Beobachtung")
+
+    waechter("Nicht alles, was sichtbar ist, wurde gleich gestaltet. Achte auf die Details.")
+
+    ornamente = st.number_input(
+        "Wie viele dieser Särge tragen ein rundovales Ornament?",
+        min_value=0,
+        max_value=20,
+        step=1
+    )
+
+    if st.button("Antwort prüfen"):
+        if ornamente == 1:
+            gehe_zu("frage_kinder")
+        else:
+            st.error("Der Wächter ist nicht überzeugt.")
+            waechter(
+                "Mindestens ein Detail ist dir entgangen.<br><br>"
+                "Das ist unpraktisch, wenn man beurteilt werden möchte."
+            )
+
+
+elif st.session_state.seite == "frage_kinder":
+
+    st.header("Dritte Beobachtung")
+
+    waechter("Nun lies. Der Wächter prüft nicht nur Augen, sondern auch Geduld.")
+
+    kinder = st.number_input(
+        "Wie viele Kinder hatte Heinrich Graf von Podewils laut Infotafel?",
+        min_value=0,
+        max_value=20,
+        step=1
+    )
+
+    if st.button("Antwort prüfen"):
+        if kinder == 4:
+            gehe_zu("entscheidung_1")
+        else:
+            st.error("Der Wächter ist nicht überzeugt.")
+            waechter(
+                "Lesen gehört zu den unterschätzten Kulturtechniken.<br><br>"
+                "Schau noch einmal auf die Infotafel."
+            )
+
 
 elif st.session_state.seite == "entscheidung_1":
 
@@ -277,13 +297,14 @@ elif st.session_state.seite == "entscheidung_1":
 
     st.header("Die erste Frage")
 
-    waechter_text(
-        f"Akzeptabel, {name}. Du kannst zählen und lesen. "
+    waechter(
+        f"Akzeptabel, {name}.<br><br>"
+        "Du kannst zählen und lesen.<br><br>"
         "Beides wird überschätzt – aber es ist ein Anfang."
     )
 
-    waechter_text(
-        "Menschen glauben oft, dass Mauern, Besitz oder Ordnung ein Dorf zusammenhalten. "
+    waechter(
+        "Menschen glauben oft, dass Mauern, Besitz oder Ordnung ein Dorf zusammenhalten.<br><br>"
         "Sie irren sich erstaunlich häufig."
     )
 
@@ -310,18 +331,16 @@ elif st.session_state.seite == "urteil_1":
 
     st.header("Urteil des Wächters")
 
-    if entscheidung == "Ordnung":
-        waechter_text("Preußisch. Berechenbar. Nicht spannend – aber selten völlig falsch.")
-    elif entscheidung == "Geschichten":
-        waechter_text("Interessant. Menschen nennen Erinnerungen gern Wahrheit. Meist sind sie nur besser erzählt.")
-    elif entscheidung == "Wahrheit":
-        waechter_text("Mutig. Oder naiv. Wahrheit macht selten beliebt und noch seltener bequem.")
-    elif entscheidung == "Tradition":
-        waechter_text("Menschen halten erstaunlich lange an Dingen fest. Selbst dann, wenn niemand mehr weiß, warum.")
-    elif entscheidung == "Die letzte Dorfkneipe":
-        waechter_text("Endlich Ehrlichkeit. Gesellschaftlicher Zusammenhalt entsteht selten nüchtern.")
-    elif entscheidung == "Das Freudenhaus":
-        waechter_text("Bemerkenswert offen. Historisch schwer zu verteidigen. Menschlich nicht völlig unverständlich.")
+    texte = {
+        "Ordnung": "Preußisch. Berechenbar.<br><br>Nicht spannend – aber selten völlig falsch.",
+        "Geschichten": "Interessant.<br><br>Menschen nennen Erinnerungen gern Wahrheit.<br><br>Meist sind sie nur besser erzählt.",
+        "Wahrheit": "Mutig. Oder naiv.<br><br>Wahrheit macht selten beliebt und noch seltener bequem.",
+        "Tradition": "Menschen halten erstaunlich lange an Dingen fest.<br><br>Selbst dann, wenn niemand mehr weiß, warum.",
+        "Die letzte Dorfkneipe": "Endlich Ehrlichkeit.<br><br>Gesellschaftlicher Zusammenhalt entsteht selten nüchtern.",
+        "Das Freudenhaus": "Bemerkenswert offen.<br><br>Historisch schwer zu verteidigen.<br><br>Menschlich nicht völlig unverständlich.",
+    }
+
+    waechter(texte[entscheidung])
 
     st.subheader("Nächster Ort")
     st.info("Kehre zum Parkplatz zurück und suche dort die Säule. Der nächste Teil der Prüfung erwartet dich bereits.")
@@ -330,24 +349,33 @@ elif st.session_state.seite == "urteil_1":
         gehe_zu("saeule")
 
 
-# -----------------------------
-# SÄULE
-# -----------------------------
-
 elif st.session_state.seite == "saeule":
 
     name = st.session_state.name
 
     st.header("Die zweite Prüfung")
 
-    waechter_text(
-        f"Reiß dich zusammen, {name}. Die nächste Prüfung verlangt mehr als bloßes Herumstehen."
+    waechter(
+        f"Reiß dich zusammen, {name}.<br><br>"
+        "Diese Säule erzählt von den Grundlagen eines funktionierenden Dorfes.<br><br>"
+        "Sie sprechen selten laut – aber sie tragen alles."
     )
 
-    st.write("Welche Symbole erkennst du tatsächlich?")
+    st.markdown("""
+    <div class="symbolbox">
+    <b>Der Pflug</b><br>
+    steht für Nahrung. Ohne sie hungert ein Dorf.<br><br>
+    <b>Der Äskulapstab</b><br>
+    steht für Gesundheit. Ohne sie leidet ein Dorf.<br><br>
+    <b>Der Amboss mit Werkzeug</b><br>
+    steht für Arbeit und Handwerk. Ohne sie steht ein Dorf still.<br><br>
+    <b>Die Kanne</b><br>
+    steht für Versorgung und Gemeinschaft. Ohne sie zerfällt ein Dorf.
+    </div>
+    """, unsafe_allow_html=True)
 
     symbole = st.multiselect(
-        "Wähle alle zutreffenden Antworten:",
+        "Welche Symbole erkennst du tatsächlich?",
         [
             "Amboss mit Werkzeug",
             "Äskulapstab",
@@ -370,20 +398,20 @@ elif st.session_state.seite == "saeule":
             gehe_zu("entscheidung_2")
         else:
             st.error("Der Wächter ist nicht überzeugt.")
-            waechter_text(
-                "Interessant. Entweder blickst du kreativ auf Symbolik – "
-                "oder deine Beobachtungsgabe macht gerade Urlaub. Schau genauer hin."
+            waechter(
+                "Interessant.<br><br>"
+                "Entweder blickst du kreativ auf Symbolik – oder deine Beobachtungsgabe macht gerade Urlaub.<br><br>"
+                "Schau genauer hin."
             )
 
 
 elif st.session_state.seite == "entscheidung_2":
 
-    st.header("Was hält ein Dorf zusammen?")
+    st.header("Die zweite Frage")
 
-    waechter_text(
-        "Akzeptabel. Pflug, Äskulapstab, Amboss und Kanne. "
-        "Nahrung, Gesundheit, Arbeit und Gemeinschaft. "
-        "Die Grundlagen jedes funktionierenden Dorfes."
+    waechter(
+        "Akzeptabel.<br><br>"
+        "Du erkennst zumindest die Grundlagen funktionierender Dorfverwaltung."
     )
 
     entscheidung = st.radio(
@@ -400,32 +428,34 @@ elif st.session_state.seite == "urteil_2":
 
     name = st.session_state.name
     titel = st.session_state.titel
-    entscheidung_1 = st.session_state.entscheidung_1
-    entscheidung_2 = st.session_state.entscheidung_2
+    e1 = st.session_state.entscheidung_1
+    e2 = st.session_state.entscheidung_2
 
     st.header("Urteil des Wächters")
 
-    if entscheidung_2 == "Nahrung":
-        waechter_text("Pragmatisch. Hungrige Menschen diskutieren schlecht.")
-    elif entscheidung_2 == "Gesundheit":
-        waechter_text("Mitgefühl. Riskant – aber ehrenhaft.")
-    elif entscheidung_2 == "Arbeit":
-        waechter_text("Verdächtig preußisch. Beeindruckend effizient.")
-    elif entscheidung_2 == "Gemeinschaft":
-        waechter_text("Überraschend vernünftig.")
+    urteile = {
+        "Nahrung": "Pragmatisch.<br><br>Hungrige Menschen diskutieren schlecht.",
+        "Gesundheit": "Mitgefühl.<br><br>Riskant – aber ehrenhaft.",
+        "Arbeit": "Verdächtig preußisch.<br><br>Beeindruckend effizient.",
+        "Gemeinschaft": "Überraschend vernünftig.",
+    }
 
-    if entscheidung_1 == "Geschichten" and entscheidung_2 == "Gemeinschaft":
-        waechter_text(f"Der Wächter hält dich für erstaunlich menschlich, {name} {titel}.")
-    elif entscheidung_1 == "Ordnung" and entscheidung_2 == "Arbeit":
-        waechter_text(f"Der Wächter vermutet Verwaltungserfahrung, {name} {titel}.")
+    text = urteile[e2]
+
+    if e1 == "Geschichten" and e2 == "Gemeinschaft":
+        text += f"<br><br>Der Wächter hält dich für erstaunlich menschlich, {name} {titel}."
+    elif e1 == "Ordnung" and e2 == "Arbeit":
+        text += f"<br><br>Der Wächter vermutet Verwaltungserfahrung, {name} {titel}."
     else:
-        waechter_text(f"Der Wächter hat deine Entscheidungen registriert, {name}.")
-        waechter_text("Noch ist unklar, ob das beruhigend ist.")
+        text += f"<br><br>Der Wächter hat deine Entscheidungen registriert, {name}.<br><br>Noch ist unklar, ob das beruhigend ist."
+
+    waechter(text)
 
     st.subheader("Der nächste Ort")
 
-    waechter_text(
-        "Ihr habt gesehen. Ihr habt geurteilt. Nun folgt dem Weg. "
+    waechter(
+        "Ihr habt gesehen. Ihr habt geurteilt.<br><br>"
+        "Nun folgt dem Weg.<br><br>"
         "Begebt euch an diesen Ort. Der Wächter wartet bereits."
     )
 
@@ -435,19 +465,16 @@ elif st.session_state.seite == "urteil_2":
         gehe_zu("schwelle")
 
 
-# -----------------------------
-# SCHWELLE
-# -----------------------------
-
 elif st.session_state.seite == "schwelle":
 
     name = st.session_state.name
 
     st.header("Die Schwelle")
 
-    waechter_text(
-        f"{name}. Von hier an wird es schwieriger. "
-        "Manche Wege verbinden Orte. Andere verbinden Entscheidungen."
+    waechter(
+        f"{name}. Von hier an wird es schwieriger.<br><br>"
+        "Manche Wege verbinden Orte.<br><br>"
+        "Andere verbinden Entscheidungen."
     )
 
     antwort = st.radio(
@@ -464,9 +491,10 @@ elif st.session_state.seite == "schwelle":
             gehe_zu("tier_pruefung")
         else:
             st.error("Der Wächter ist nicht überzeugt.")
-            waechter_text(
-                f"Originell, {name}. Der Wächter schätzt Kreativität. "
-                "Allerdings erst nach korrekter Beobachtung. Schau genauer hin."
+            waechter(
+                f"Originell, {name}.<br><br>"
+                "Der Wächter schätzt Kreativität.<br><br>"
+                "Allerdings erst nach korrekter Beobachtung."
             )
 
 
@@ -476,9 +504,10 @@ elif st.session_state.seite == "tier_pruefung":
 
     st.header("Die Prüfung der Aufmerksamkeit")
 
-    waechter_text(
-        f"Nicht jeder Wächter besteht aus Stein, {name}. "
-        "Nicht jeder Wächter spricht. Manche beobachten einfach."
+    waechter(
+        f"Nicht jeder Wächter besteht aus Stein, {name}.<br><br>"
+        "Nicht jeder Wächter spricht.<br><br>"
+        "Manche beobachten einfach."
     )
 
     tier = st.radio(
@@ -491,15 +520,17 @@ elif st.session_state.seite == "tier_pruefung":
             gehe_zu("tier_urteil")
         else:
             st.error("Der Wächter ist nicht überzeugt.")
-            waechter_text("Große Augen wären hilfreich gewesen. Schau dich noch einmal genauer um.")
+            waechter("Große Augen wären hilfreich gewesen.<br><br>Schau dich noch einmal genauer um.")
 
 
 elif st.session_state.seite == "tier_urteil":
 
     st.header("Urteil des Wächters")
 
-    waechter_text(
-        "Große Augen. Wenige Worte. Der Wächter erkennt Verwandtschaft im Geiste."
+    waechter(
+        "Große Augen.<br><br>"
+        "Wenige Worte.<br><br>"
+        "Der Wächter erkennt Verwandtschaft im Geiste."
     )
 
     if st.button("Dem Wächter folgen"):
@@ -512,9 +543,10 @@ elif st.session_state.seite == "hoeren":
 
     st.header("Die Prüfung des Hörens")
 
-    waechter_text(
-        f"Nun schweige selbst einen Moment, {name}. "
-        "Nicht jede Prüfung verlangt Augen. Schließe sie. Höre genau hin."
+    waechter(
+        f"Nun schweige selbst einen Moment, {name}.<br><br>"
+        "Nicht jede Prüfung verlangt Augen.<br><br>"
+        "Schließe sie. Höre genau hin."
     )
 
     geraeusch = st.radio(
@@ -540,37 +572,32 @@ elif st.session_state.seite == "hoeren_urteil":
 
     st.header("Urteil des Wächters")
 
-    if geraeusch == "Blätterrascheln":
-        waechter_text("Die Natur spricht leise. Du hast zugehört.")
-    elif geraeusch == "Vogelstimmen":
-        waechter_text("Aufmerksam. Nicht jede Botschaft wird mit Worten überbracht.")
-    elif geraeusch == "Autolärm":
-        waechter_text("Realistisch. Der Wächter respektiert Ehrlichkeit.")
-    elif geraeusch == "Wind":
-        waechter_text("Viele übersehen ihn. Du offenbar nicht.")
-    elif geraeusch == "Die Stimme des Wächters":
-        waechter_text("Beunruhigend. Aber nicht grundsätzlich falsch.")
+    texte = {
+        "Blätterrascheln": "Die Natur spricht leise.<br><br>Du hast zugehört.",
+        "Vogelstimmen": "Aufmerksam.<br><br>Nicht jede Botschaft wird mit Worten überbracht.",
+        "Autolärm": "Realistisch.<br><br>Der Wächter respektiert Ehrlichkeit.",
+        "Wind": "Viele übersehen ihn.<br><br>Du offenbar nicht.",
+        "Die Stimme des Wächters": "Beunruhigend.<br><br>Aber nicht grundsätzlich falsch.",
+    }
 
-    waechter_text(
-        f"Du hast gesehen. Du hast gehört. Noch eine Prüfung, {name}. "
-        "Danach fällt das Urteil. Also reiß dich zusammen."
+    waechter(
+        texte[geraeusch] +
+        f"<br><br>Du hast gesehen. Du hast gehört.<br><br>Noch eine Prüfung, {name}. Danach fällt das Urteil.<br><br>Also reiß dich zusammen."
     )
 
     if st.button("Das Urteil erwarten"):
         gehe_zu("entscheidung_3")
 
 
-# -----------------------------
-# LETZTE FRAGE
-# -----------------------------
-
 elif st.session_state.seite == "entscheidung_3":
 
     st.header("Die letzte Frage")
 
-    waechter_text(
-        "Eine Wahrheit über Fredersdorf gelangt in deine Hände. "
-        "Sie könnte helfen. Sie könnte verletzen. Sie könnte Unruhe stiften."
+    waechter(
+        "Eine Wahrheit über Fredersdorf gelangt in deine Hände.<br><br>"
+        "Sie könnte helfen.<br><br>"
+        "Sie könnte verletzen.<br><br>"
+        "Sie könnte Unruhe stiften."
     )
 
     entscheidung = st.radio(
@@ -587,88 +614,79 @@ elif st.session_state.seite == "entscheidung_3":
         gehe_zu("endurteil")
 
 
-# -----------------------------
-# ENDURTEIL
-# -----------------------------
-
 elif st.session_state.seite == "endurteil":
 
     name = st.session_state.name
     titel = st.session_state.titel
-    entscheidung_3 = st.session_state.entscheidung_3
+    e3 = st.session_state.entscheidung_3
 
-    st.header("Das Urteil des Wächters")
+    st.header("Das abschließende Urteil")
 
-    if entscheidung_3 == "Sofort veröffentlichen":
+    if e3 == "Sofort veröffentlichen":
 
-        waechter_text(
-            f"Bedauerlich, {name}. Der Wächter hatte Hoffnungen. "
-            "Nicht besonders große – aber immerhin Hoffnungen."
-        )
+        st.markdown("### Vorläufige Beaufsichtigung")
 
-        waechter_text(
+        waechter(
+            f"Bedauerlich, {name}.<br><br>"
+            "Der Wächter hatte Hoffnungen.<br><br>"
+            "Nicht besonders große – aber immerhin Hoffnungen.<br><br>"
             "Deine Antworten deuten auf spontane Moral, ausgeprägte Transparenz "
             "oder eine bemerkenswerte Neigung zu moralischer Flexibilität hin."
         )
 
-        st.subheader("Vorläufige Beaufsichtigung")
-
-        waechter_text(
-            "Das eigentliche Vermächtnis wird heute anderen anvertraut."
-        )
-
-        waechter_text(
+        waechter(
+            "Das eigentliche Vermächtnis wird heute anderen anvertraut.<br><br>"
             "Für Personen mit vorläufig eingeschränkter Vertrauenswürdigkeit "
-            "unterhält der Wächter jedoch eine gesonderte Einrichtung."
-        )
-
-        waechter_text(
+            "unterhält der Wächter jedoch eine gesonderte Einrichtung.<br><br>"
             "Eine kleine Dose für Besucher, deren moralische Flexibilität "
-            "noch einer genaueren Beobachtung bedarf."
-        )
-
-        waechter_text(
-            "Der Wächter nennt sie gelegentlich: „Die Quarantänebox.“ "
+            "noch einer genaueren Beobachtung bedarf.<br><br>"
+            "Der Wächter nennt sie gelegentlich:<br><br>"
+            "<b>„Die Quarantänebox.“</b><br><br>"
             "Natürlich vollkommen inoffiziell."
         )
 
         koordinate("N 52° 30.811'", "E 13° 45.022'")
 
-        st.markdown("**Einstufung: Moralisch flexibel. Beaufsichtigung empfohlen.**")
+        st.markdown("""
+        **Einstufung:** Moralisch flexibel. Beaufsichtigung empfohlen.
 
-        st.write("Auch der Wächter gibt jedem eine zweite Chance.")
-        st.write("Arbeite an:")
-        st.write("☐ Integrität")
-        st.write("☐ Verschwiegenheit")
-        st.write("☐ Verantwortungsbewusstsein")
-        st.write("☐ Dorfverwaltungskompetenz")
-        st.write("☐ Weniger spontane Offenheit")
-        st.write("Du darfst selbstverständlich loggen.")
-        st.write("Der Wächter glaubt an Entwicklung. Meistens.")
+        **Arbeite an:**
+
+        🛡️ Integrität  
+        🔒 Verschwiegenheit  
+        ⚖️ Verantwortungsbewusstsein  
+        🏛️ Dorfverwaltungskompetenz  
+        👁️ Weniger spontane Offenheit  
+
+        Du darfst selbstverständlich loggen.
+
+        Der Wächter glaubt an Entwicklung. Meistens.
+        """)
 
     else:
 
-        if entscheidung_3 == "Geheim halten":
-            waechter_text("Verschwiegenheit. Kontrolle. Das gefällt dem Wächter.")
-        else:
-            waechter_text("Abgewogen. Erstaunlich differenziert.")
+        st.markdown("### Podewils' Vermächtnis")
 
-        st.subheader("Podewils' Vermächtnis")
+        if e3 == "Geheim halten":
+            waechter("Verschwiegenheit.<br><br>Kontrolle.<br><br>Das gefällt dem Wächter.")
+        else:
+            waechter("Abgewogen.<br><br>Erstaunlich differenziert.")
 
         koordinate("N 52° 30.931'", "E 13° 45.063'")
 
-        waechter_text(
-            f"Gegen alle Erwartungen erscheinst du geeignet, {name} {titel}."
+        waechter(
+            f"Gegen alle Erwartungen erscheinst du geeignet, {name} {titel}.<br><br>"
+            "Du hast gesehen.<br><br>"
+            "Du hast zugehört.<br><br>"
+            "Du hast geurteilt.<br><br>"
+            "Heute wurdest auch du beurteilt."
         )
 
-        waechter_text("Du hast gesehen.")
-        waechter_text("Du hast zugehört.")
-        waechter_text("Du hast geurteilt.")
-        waechter_text("Heute wurdest auch du beurteilt.")
-
-        waechter_text(
-            "Podewils' Vermächtnis wird dir anvertraut. "
-            "Trage dich ein. Bewahre das Vermächtnis. Und schweige mit Würde."
+        waechter(
+            "Podewils' Vermächtnis wird dir anvertraut.<br><br>"
+            "Trage dich ein.<br><br>"
+            "Bewahre das Vermächtnis.<br><br>"
+            "Und schweige mit Würde."
         )
 
     st.divider()
