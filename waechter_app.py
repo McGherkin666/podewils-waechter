@@ -2,8 +2,6 @@ import streamlit as st
 
 st.set_page_config(page_title="Podewils' Vermächtnis", page_icon="🦉", layout="centered")
 
-# ---------- DESIGN ----------
-
 st.markdown("""
 <style>
 .stApp { background-color: #0f0f0f; color: #f1e7d0; }
@@ -85,8 +83,6 @@ div[data-baseweb="select"] > div {
 """, unsafe_allow_html=True)
 
 
-# ---------- FUNKTIONEN ----------
-
 def waechter(text):
     st.markdown(
         f"""
@@ -113,37 +109,35 @@ def add_punkte(punkte):
 
 
 def vertrauensquote():
-    if st.session_state.max_punkte == 0:
-        return 0
     return round((st.session_state.punkte / st.session_state.max_punkte) * 100)
 
 
 def titel_bilden(geschlecht, eigenschaft):
     formen = {
-        "wachsam": ("die Wachsame", "der Wachsame", "wachsam"),
-        "neugierig": ("die Neugierige", "der Neugierige", "neugierig"),
-        "beharrlich": ("die Beharrliche", "der Beharrliche", "beharrlich"),
-        "besonnen": ("die Besonnene", "der Besonnene", "besonnen"),
-        "mutig": ("die Mutige", "der Mutige", "mutig"),
-        "skeptisch": ("die Skeptische", "der Skeptische", "skeptisch"),
-        "aufmerksam": ("die Aufmerksame", "der Aufmerksame", "aufmerksam"),
-        "abenteuerlustig": ("die Abenteuerlustige", "der Abenteuerlustige", "abenteuerlustig"),
-        "gesprächsbereit": ("die Gesprächsbereite", "der Gesprächsbereite", "gesprächsbereit"),
-        "optimistisch": ("die Optimistische", "der Optimistische", "optimistisch"),
-        "vertrauensselig": ("die Vertrauensselige", "der Vertrauensselige", "vertrauensselig"),
-        "naiv": ("die Naive", "der Naive", "naiv"),
-        "eigenwillig": ("die Eigenwillige", "der Eigenwillige", "eigenwillig"),
-        "impulsiv": ("die Impulsive", "der Impulsive", "impulsiv"),
-        "treuherzig": ("die Treuherzige", "der Treuherzige", "treuherzig"),
+        "wachsam": ("die Wachsame", "der Wachsame"),
+        "neugierig": ("die Neugierige", "der Neugierige"),
+        "beharrlich": ("die Beharrliche", "der Beharrliche"),
+        "besonnen": ("die Besonnene", "der Besonnene"),
+        "mutig": ("die Mutige", "der Mutige"),
+        "skeptisch": ("die Skeptische", "der Skeptische"),
+        "aufmerksam": ("die Aufmerksame", "der Aufmerksame"),
+        "abenteuerlustig": ("die Abenteuerlustige", "der Abenteuerlustige"),
+        "gesprächsbereit": ("die Gesprächsbereite", "der Gesprächsbereite"),
+        "optimistisch": ("die Optimistische", "der Optimistische"),
+        "vertrauensselig": ("die Vertrauensselige", "der Vertrauensselige"),
+        "naiv": ("die Naive", "der Naive"),
+        "eigenwillig": ("die Eigenwillige", "der Eigenwillige"),
+        "impulsiv": ("die Impulsive", "der Impulsive"),
+        "treuherzig": ("die Treuherzige", "der Treuherzige"),
     }
+
     weiblich, maennlich = formen[eigenschaft]
 
-if geschlecht == "weiblich":
-    return weiblich
-else:
-    return maennlich
+    if geschlecht == "weiblich":
+        return weiblich
+    else:
+        return maennlich
 
-# ---------- SESSION ----------
 
 defaults = {
     "seite": "start",
@@ -163,8 +157,6 @@ for k, v in defaults.items():
         st.session_state[k] = v
 
 
-# ---------- KOPF ----------
-
 try:
     st.image("Podewils.jpeg", use_container_width=True)
 except Exception:
@@ -174,8 +166,6 @@ st.title("PODEWILS' VERMÄCHTNIS")
 st.subheader("Das Urteil des Wächters")
 st.divider()
 
-
-# ---------- START ----------
 
 if st.session_state.seite == "start":
 
@@ -189,7 +179,11 @@ if st.session_state.seite == "start":
     )
 
     name = st.text_input("Wie lautet dein Name?")
-    geschlecht = st.selectbox("Geschlecht", ["weiblich", "männlich"])
+
+    geschlecht = st.selectbox(
+        "Geschlecht",
+        ["weiblich", "männlich"]
+    )
 
     eigenschaft = st.selectbox(
         "Welche Eigenschaft beschreibt dich am besten?",
@@ -209,8 +203,6 @@ if st.session_state.seite == "start":
             st.session_state.titel = titel_bilden(geschlecht, eigenschaft)
             gehe_zu("mausoleum_start")
 
-
-# ---------- MAUSOLEUM ----------
 
 elif st.session_state.seite == "mausoleum_start":
 
@@ -233,9 +225,15 @@ elif st.session_state.seite == "mausoleum_start":
 elif st.session_state.seite == "frage_saerge":
 
     st.header("Erste Beobachtung")
+
     waechter("Zähle genau. Dies ist kein Ort für grobe Schätzungen.")
 
-    saerge = st.number_input("Wie viele sichtbare Särge erkennst du?", min_value=0, max_value=20, step=1)
+    saerge = st.number_input(
+        "Wie viele sichtbare Särge erkennst du?",
+        min_value=0,
+        max_value=20,
+        step=1
+    )
 
     if st.button("Antwort prüfen"):
         if saerge == 4:
@@ -253,6 +251,7 @@ elif st.session_state.seite == "frage_saerge":
 elif st.session_state.seite == "frage_ornament":
 
     st.header("Zweite Beobachtung")
+
     waechter("Nicht alles, was sichtbar ist, wurde gleich gestaltet. Achte auf die Details.")
 
     ornamente = st.number_input(
@@ -277,7 +276,12 @@ elif st.session_state.seite == "frage_ornament":
 elif st.session_state.seite == "frage_kinder":
 
     st.header("Dritte Beobachtung")
-    waechter("Nun lies. Der Wächter prüft nicht nur Augen, sondern auch Geduld.")
+
+    waechter(
+        "Nun lies aufmerksam.<br><br>"
+        "Nicht jede Antwort verbirgt sich hinter Stein und Ornamenten.<br><br>"
+        "Manche stehen offen vor dir – und werden trotzdem übersehen."
+    )
 
     kinder = st.number_input(
         "Wie viele Kinder haben ihm das Mausoleum laut Infotafel gewidmet?",
@@ -297,8 +301,6 @@ elif st.session_state.seite == "frage_kinder":
                 "Schau noch einmal auf die Infotafel."
             )
 
-
-# ---------- ENTSCHEIDUNG 1 ----------
 
 elif st.session_state.seite == "entscheidung_1":
 
@@ -368,8 +370,6 @@ elif st.session_state.seite == "urteil_1":
         gehe_zu("saeule")
 
 
-# ---------- SÄULE ----------
-
 elif st.session_state.seite == "saeule":
 
     name = st.session_state.name
@@ -395,7 +395,12 @@ elif st.session_state.seite == "saeule":
         ],
     )
 
-    richtige_symbole = {"Amboss mit Werkzeug", "Äskulapstab", "Pflug", "Kanne"}
+    richtige_symbole = {
+        "Amboss mit Werkzeug",
+        "Äskulapstab",
+        "Pflug",
+        "Kanne",
+    }
 
     if st.button("Symbole prüfen"):
         if set(symbole) == richtige_symbole:
@@ -491,8 +496,6 @@ elif st.session_state.seite == "urteil_2":
         gehe_zu("schwelle")
 
 
-# ---------- SCHWELLE ----------
-
 elif st.session_state.seite == "schwelle":
 
     name = st.session_state.name
@@ -519,13 +522,12 @@ elif st.session_state.seite == "schwelle":
 
         if antwort == "Eine Brücke":
             add_punkte(10)
-            gehe_zu("bruecke_urteil")
         elif antwort == "Eine äußerst preußische Methode, nicht nass zu werden":
             add_punkte(8)
-            gehe_zu("bruecke_urteil")
         else:
             add_punkte(7)
-            gehe_zu("bruecke_urteil")
+
+        gehe_zu("bruecke_urteil")
 
 
 elif st.session_state.seite == "bruecke_urteil":
@@ -659,8 +661,6 @@ elif st.session_state.seite == "hoeren_urteil":
         gehe_zu("entscheidung_3")
 
 
-# ---------- LETZTE FRAGE ----------
-
 elif st.session_state.seite == "entscheidung_3":
 
     st.header("Die letzte Frage")
@@ -693,8 +693,6 @@ elif st.session_state.seite == "entscheidung_3":
 
         gehe_zu("endurteil")
 
-
-# ---------- ENDURTEIL ----------
 
 elif st.session_state.seite == "endurteil":
 
